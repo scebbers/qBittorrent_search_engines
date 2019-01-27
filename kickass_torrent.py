@@ -1,4 +1,4 @@
-#VERSION: 1.8
+#VERSION: 1.9
 #AUTHORS: mauricci
 
 from helpers import retrieve_url
@@ -101,7 +101,7 @@ class kickass_torrent(object):
         currPage = 1
         while currPage <= pageNum:
             url = self.url+'/usearch/{0}/{1}/'.format(what,currPage)
-            #print(url)
+            print(url)
             html = retrieve_url(url)
             parser.feed(html)
             currPage += 1

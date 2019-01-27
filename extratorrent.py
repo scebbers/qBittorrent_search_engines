@@ -1,5 +1,5 @@
-#VERSION: 1.0
-#AUTHORS: mauricci
+# VERSION: 1.1
+# AUTHORS: mauricci
 
 from helpers import retrieve_url
 from helpers import download_file, retrieve_url
@@ -7,17 +7,19 @@ from novaprinter import prettyPrinter
 import re
 
 try:
-    #python3
+    # python3
     from html.parser import HTMLParser
 except ImportError:
-    #python2
+    # python2
     from HTMLParser import HTMLParser
-         
+
+
 class extratorrent(object):
     url = 'https://extratorrent.si'
     name = 'ExtraTorrent'
-    supported_categories = {'all': '0', 'movies': '4', 'tv': '8', 'music': '5', 'games': '3', 'anime': '1', 'software': '7'}
-    
+    supported_categories = {'all': '0', 'movies': '4', 'tv': '8', 'music': '5', 'games': '3', 'anime': '1',
+                            'software': '7'}
+
     class MyHTMLParser(HTMLParser):
 
         def __init__(self):
@@ -27,13 +29,15 @@ class extratorrent(object):
             self.insideDataTd = False
             self.tdCount = -1
             self.tableCount = -1
-            self.infoMap = {'torrLink':0,'name':2,'size':4,'seeds':5,'leech':6}
+            self.infoMap = {'torrLink': 0, 'name': 2, 'size': 4, 'seeds': 5, 'leech': 6}
             self.fullResData = []
+            self.pageRes = []
             self.singleResData = self.getSingleData()
-            
+
         def getSingleData(self):
-            return {'name':'-1','seeds':'-1','leech':'-1','size':'-1','link':'-1','desc_link':'-1','engine_url':self.url}
-        
+            return {'name': '-1', 'seeds': '-1', 'leech': '-1', 'size': '-1', 'link': '-1', 'desc_link': '-1',
+                    'engine_url': self.url}
+
         def handle_starttag(self, tag, attrs):
             if tag == 'table':
                 self.tableCount += 1
@@ -44,13 +48,12 @@ class extratorrent(object):
             if self.insideDataTd and tag == 'a' and len(attrs) > 0:
                 Dict = dict(attrs)
                 if self.tdCount == self.infoMap['torrLink']:
-                    if Dict.get('href','').startswith('magnet'):
+                    if Dict.get('href', '').startswith('magnet'):
                         self.singleResData['link'] = Dict['href']
-                    if Dict.get('href','').find('extratorrent') != -1:
+                    if Dict.get('href', '').find('extratorrent') != -1:
                         if Dict['href'].startswith('//'):
-                            Dict['href'] = Dict['href'].replace('//extratorrent.si',self.url)
+                            Dict['href'] = Dict['href'].replace('//extratorrent.si', self.url)
                         self.singleResData['desc_link'] = Dict['href']
-                    
 
         def handle_endtag(self, tag):
             if tag == 'td':
@@ -58,15 +61,16 @@ class extratorrent(object):
             if tag == 'tr':
                 self.tdCount = -1
                 if len(self.singleResData) > 0:
-                    #ignore trash stuff
+                    # ignore trash stuff
                     if self.singleResData['name'] != '-1':
                         prettyPrinter(self.singleResData)
+                        self.pageRes.append(self.singleResData)
                         self.fullResData.append(self.singleResData)
                     self.singleResData = self.getSingleData()
 
         def handle_data(self, data):
             if self.insideDataTd:
-                for key,val in self.infoMap.items():
+                for key, val in self.infoMap.items():
                     if self.tdCount == val:
                         currKey = key
                         if currKey in self.singleResData and data.strip() != '':
@@ -75,8 +79,8 @@ class extratorrent(object):
                             else:
                                 self.singleResData[currKey] += data.strip()
 
-        def feed(self,html):
-            HTMLParser.feed(self,html)
+        def feed(self, html):
+            HTMLParser.feed(self, html)
             self.insideDataTd = False
             self.tdCount = -1
             self.tableCount = -1
@@ -87,15 +91,19 @@ class extratorrent(object):
         currCat = self.supported_categories[cat]
         parser = self.MyHTMLParser()
 
-        #analyze firt 10 pages of results
-        for currPage in range(1,11):
-            url = self.url+'/search/?search={0}&page={1}&s_cat={2}'.format(what,currPage,currCat)
-            #print(url)
+        # analyze firt 10 pages of results
+        for currPage in range(1, 11):
+            url = self.url + '/search/?search={0}&page={1}&s_cat={2}'.format(what, currPage, currCat)
+            # print(url)
             html = retrieve_url(url)
             parser.feed(html)
+            if len(parser.pageRes) <= 0:
+                break
+            del parser.pageRes[:]
         print(parser.fullResData[0])
         data = parser.fullResData
         parser.close()
+
 
 if __name__ == "__main__":
     e = extratorrent()

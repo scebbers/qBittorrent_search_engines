@@ -34,8 +34,6 @@ class horriblesubs(object):
         def resetVars(self):
             self.titleFound = False
             self.tagCount = -1
-            for res in self.pageRes:
-                self.fullResData.append(res)
 
         def getSingleData(self):
             return {'name': '', 'seeds': '-1', 'leech': '-1', 'size': '-1', 'link': '-1', 'desc_link': '-1',
@@ -63,6 +61,7 @@ class horriblesubs(object):
                             self.singleResData['name'] = self.clearName(self.singleResData['name'])
                             prettyPrinter(self.singleResData)
                             self.pageRes.append(self.singleResData)
+                            self.fullResData.append(self.singleResData)
                     self.singleResData = self.getSingleData()
 
         def handle_data(self, data):
