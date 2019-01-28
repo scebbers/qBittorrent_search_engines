@@ -14,7 +14,7 @@ except ImportError:
 
 
 class corsaroblu(object):
-    url = 'https://www.ilcorsaroblu.org'
+    url = 'https://www.ilcorsaroblu.org/'
     name = 'Il Corsaro Blu'
     # 13%3B14%3B15%3B25%3B17%3B11%3B21 = 13;14;15;25;17;11;21
     supported_categories = {'all': '0', 'movies': '13%3B14%3B15%3B25%3B17%3B11%3B21', 'tv': '19%3B20%3B24',
@@ -24,7 +24,7 @@ class corsaroblu(object):
 
         def __init__(self):
             HTMLParser.__init__(self)
-            self.url = 'https://www.ilcorsaroblu.org'
+            self.url = 'https://www.ilcorsaroblu.org/'
             self.TABLE_INDEX = 9
             self.insideDataTd = False
             self.tableCount = -1
@@ -49,9 +49,9 @@ class corsaroblu(object):
             if self.insideDataTd and tag == 'a' and len(attrs) > 0:
                 Dict = dict(attrs)
                 if self.infoMap['torrLink'] == self.tdCount and 'href' in Dict:
-                    self.singleResData['link'] = 'https://www.ilcorsaroblu.org/' + Dict['href']
+                    self.singleResData['link'] = self.url + Dict['href']
                 if self.infoMap['name'] == self.tdCount and 'href' in Dict:
-                    self.singleResData['desc_link'] = 'https://www.ilcorsaroblu.org/' + Dict['href']
+                    self.singleResData['desc_link'] = self.url + Dict['href']
 
         def handle_endtag(self, tag):
             if tag == 'td':
@@ -94,7 +94,7 @@ class corsaroblu(object):
 
         # analyze firt 10 pages of results
         for currPage in range(1, 11):
-            url = self.url + '/index.php?page=torrents&search={0}&category={1}&pages={2}'.format(what, currCat,
+            url = self.url + 'index.php?page=torrents&search={0}&category={1}&pages={2}'.format(what, currCat,
                                                                                                  currPage)
             # print(url)
             html = retrieve_url(url)
