@@ -10,6 +10,9 @@ Search engine for [qBittorrent](https://www.qbittorrent.org/):
 - CineCalidad search engine
 - SoloTorrent search engine
 - ETTV search engine
+- ExtraTorrent search engine
+- Foxcili search engine
+- Horrible Subs search engine
 
 ## Installation
 Install the plugin by:
