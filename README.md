@@ -13,6 +13,7 @@ Search engine for [qBittorrent](https://www.qbittorrent.org/):
 - ExtraTorrent
 - Foxcili
 - Horrible
+- Cpasbien
 
 ## Installation
 Install the plugin by:
