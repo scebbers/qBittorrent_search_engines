@@ -1,18 +1,18 @@
 # qBittorrent_search_engine
 Search engine for [qBittorrent](https://www.qbittorrent.org/):
 
-- KickAss torrent search engine
-- Il Corsaro Blu torrent search engine
-- Il Corsaro Nero torrent search engine
-- Mejor torrent search engine
-- Extra torrent search engine
-- TorrentFunk search engine
-- CineCalidad search engine
-- SoloTorrent search engine
-- ETTV search engine
-- ExtraTorrent search engine
-- Foxcili search engine
-- Horrible Subs search engine
+- KickAss torrent
+- Il Corsaro Blu torrent
+- Il Corsaro Nero torrent
+- Mejor torrent
+- Extra torrent
+- TorrentFunk
+- CineCalidad
+- SoloTorrent
+- ETTV
+- ExtraTorrent
+- Foxcili
+- Horrible
 
 ## Installation
 Install the plugin by:
