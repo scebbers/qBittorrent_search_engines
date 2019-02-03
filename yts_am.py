@@ -1,0 +1,59 @@
+# VERSION: 1.0
+# AUTHORS: mauricci
+
+from helpers import download_file, retrieve_url
+from novaprinter import prettyPrinter
+import json, math
+
+try:
+    # python3
+    from html.parser import HTMLParser
+except ImportError:
+    # python2
+    from HTMLParser import HTMLParser
+
+
+class yts_am(object):
+    url = 'https://yts.am/'
+    name = 'Yts.am'
+    # category not used, just declared for qbt
+    supported_categories = {'all': '', 'movies': ''}
+
+    def search(self, what, cat='all'):
+        page = 1
+        limit = 20  # results per page
+        moviesPage = 10  # actual movies page number
+
+        while page <= 10 and page <= moviesPage:  # max 10 pages
+            url = self.url + 'query_term={0}&page={1}&limit={2}'.format(what, page, limit)
+            page += 1
+            html = retrieve_url(url)
+            json = json.loads(html)
+            self.processJson(json)
+            moviesPage = math.ceil(float(json['data']['movie_count']) / limit)
+
+    def getSingleData(self):
+        return {'name': '-1', 'seeds': '-1', 'leech': '-1', 'size': '-1', 'link': '-1', 'desc_link': '-1',
+                'engine_url': self.url}
+
+    def processJson(self, json):
+        movieData = self.getSingleData()
+        for movie in json['data']['movies']:
+            movieData['name'] = movie['title']
+            movieData['desc_link'] = movie['url']
+            for torrent in movie['torrents']:
+                movieData['seeds'] = torrent['seeds']
+                movieData['leech'] = torrent['leech']
+                movieData['size'] = torrent['size']
+                movieData['link'] = torrent['url']
+                prettyPrinter(movieData)
+
+    def download_torrent(self, info):
+        """ Downloader """
+        print(download_file(info))
+
+
+# script test
+if __name__ == "__main__":
+    y = yts_am()
+    y.search('tomb%20raider')
