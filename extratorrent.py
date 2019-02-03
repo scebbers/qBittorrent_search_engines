@@ -100,7 +100,7 @@ class extratorrent(object):
             if len(parser.pageRes) <= 0:
                 break
             del parser.pageRes[:]
-        print(parser.fullResData[0])
+        #print(parser.fullResData[0])
         data = parser.fullResData
         parser.close()
 
