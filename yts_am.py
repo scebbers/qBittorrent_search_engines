@@ -25,12 +25,12 @@ class yts_am(object):
         moviesPage = 10  # actual movies page number
 
         while page <= 10 and page <= moviesPage:  # max 10 pages
-            url = self.url + 'query_term={0}&page={1}&limit={2}'.format(what, page, limit)
+            url = self.url + 'api/v2/list_movies.json?query_term={0}&page={1}&limit={2}'.format(what, page, limit)
             page += 1
             html = retrieve_url(url)
-            json = json.loads(html)
-            self.processJson(json)
-            moviesPage = math.ceil(float(json['data']['movie_count']) / limit)
+            jsonData = json.loads(html)
+            self.processJson(jsonData)
+            moviesPage = math.ceil(float(jsonData['data']['movie_count']) / limit)
 
     def getSingleData(self):
         return {'name': '-1', 'seeds': '-1', 'leech': '-1', 'size': '-1', 'link': '-1', 'desc_link': '-1',
@@ -39,11 +39,11 @@ class yts_am(object):
     def processJson(self, json):
         movieData = self.getSingleData()
         for movie in json['data']['movies']:
-            movieData['name'] = movie['title']
+            movieData['name'] = '{} - {}'.format(movie['title'], movies['year'])
             movieData['desc_link'] = movie['url']
             for torrent in movie['torrents']:
                 movieData['seeds'] = torrent['seeds']
-                movieData['leech'] = torrent['leech']
+                movieData['leech'] = torrent['peers']
                 movieData['size'] = torrent['size']
                 movieData['link'] = torrent['url']
                 prettyPrinter(movieData)
