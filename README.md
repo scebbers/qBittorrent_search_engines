@@ -1,5 +1,5 @@
 # qBittorrent_search_engine
-Search engine for [qBittorrent](https://www.qbittorrent.org/):
+Search engines for [qBittorrent](https://www.qbittorrent.org/):
 
 - KickAss torrent
 - Il Corsaro Blu torrent
