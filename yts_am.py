@@ -20,17 +20,17 @@ class yts_am(object):
     supported_categories = {'all': '', 'movies': ''}
 
     def search(self, what, cat='all'):
-        page = 1
+        page = 1#current page number
         limit = 20  # results per page
-        moviesPage = 10  # actual movies page number
+        moviesPages = 10  # actual total number of pages
 
-        while page <= 10 and page <= moviesPage:  # max 10 pages
+        while page <= 10 and page <= moviesPages:  # max 10 pages
             url = self.url + 'api/v2/list_movies.json?query_term={0}&page={1}&limit={2}'.format(what, page, limit)
             page += 1
             html = retrieve_url(url)
             jsonData = json.loads(html)
             self.processJson(jsonData)
-            moviesPage = math.ceil(float(jsonData['data']['movie_count']) / limit)
+            moviesPages = math.ceil(float(jsonData['data']['movie_count']) / limit)
 
     def getSingleData(self):
         return {'name': '-1', 'seeds': '-1', 'leech': '-1', 'size': '-1', 'link': '-1', 'desc_link': '-1',
