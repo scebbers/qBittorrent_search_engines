@@ -12,8 +12,9 @@ Search engines for [qBittorrent](https://www.qbittorrent.org/):
 - ETTV
 - ExtraTorrent
 - Foxcili
-- Horrible
+- Horrible subs
 - Cpasbien
+- Yts.am
 
 ## Installation
 Install the plugin by:
