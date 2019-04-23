@@ -11,7 +11,7 @@ Search engines for [qBittorrent](https://www.qbittorrent.org/):
 - SoloTorrent
 - ETTV
 - ExtraTorrent
-- Foxcili
+- Foxcili (no longer works because reCAPTCHA protection)
 - Horrible subs
 - Cpasbien
 - Yts.am
