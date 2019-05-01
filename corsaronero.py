@@ -1,4 +1,4 @@
-# VERSION: 1.6
+# VERSION: 1.7
 # AUTHORS: mauricci
 
 from helpers import retrieve_url
@@ -15,7 +15,7 @@ except ImportError:
 
 
 class corsaronero(object):
-    url = 'http://ilcorsaroneros.info'
+    url = 'http://ilcorsaronero.gratis'
     name = 'Il Corsaro Nero'
     supported_categories = {'all': '0'}
 
@@ -23,13 +23,13 @@ class corsaronero(object):
 
         def __init__(self):
             HTMLParser.__init__(self)
-            self.url = 'http://ilcorsaroneros.info'
-            self.TABLE_INDEX = 4
+            self.url = 'http://ilcorsaronero.gratis'
+            self.TABLE_INDEX = 0
             self.insideTd = False
             self.insideDataTd = False
             self.tableCount = -1
             self.tdCount = -1
-            self.infoMap = {'name': 1, 'size': 2, 'seeds': 5, 'leech': 6}
+            self.infoMap = {'name': 0, 'size': 2, 'seeds': 3, 'leech': 4}
             self.fullResData = []
             self.pageRes = []
             self.singleResData = self.getSingleData()
@@ -102,7 +102,7 @@ class corsaronero(object):
 
         # analyze firt page of results (thre are 40 entries)
         for currPage in range(1, 2):
-            url = self.url + '/argh.php?search={0}&page={1}'.format(what, currPage)
+            url = self.url + '/?s={0}&page={1}'.format(what, currPage)
             #print(url)
             html = retrieve_url(url)
             parser.feed(html)
@@ -116,13 +116,11 @@ class corsaronero(object):
     def download_torrent(self, info):
         """ Downloader """
         html = retrieve_url(info)
-        m = re.search('(<a.*? class=".*?magnet".*?>)', html)
+        m = re.search('<a.*? href="(.*?magnet.*?)"', html)
         if m and len(m.groups()) > 0:
-            magnetAnchor = m.group(1)
-            if magnetAnchor:
-                magnetLink = re.search('href="(.+?)"', magnetAnchor)
-                if magnetLink and len(magnetLink.groups()) > 0:
-                    print(magnetLink.group(1) + ' ' + info)
+            magnetLink = m.group(1)
+            if magnetLink:
+                print(magnetLink + ' ' + info)
 
 
 if __name__ == "__main__":
