@@ -1,5 +1,6 @@
 __pycache__/
 __init__.py
+.idea/
 helpers.py
 nova2.py
 nova2dl.py
