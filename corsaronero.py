@@ -1,117 +1,64 @@
-# VERSION: 1.7
+# VERSION: 1.8
 # AUTHORS: mauricci
 
-from helpers import retrieve_url
 from helpers import download_file, retrieve_url
 from novaprinter import prettyPrinter
 import re
-
-try:
-    # python3
-    from html.parser import HTMLParser
-except ImportError:
-    # python2
-    from HTMLParser import HTMLParser
-
 
 class corsaronero(object):
     url = 'http://ilcorsaronero.gratis'
     name = 'Il Corsaro Nero'
     supported_categories = {'all': '0'}
+    # maximum number of pages to search in
+    max_page = 7
 
-    class MyHTMLParser(HTMLParser):
-
+    class MyHTMLParser():
         def __init__(self):
-            HTMLParser.__init__(self)
             self.url = 'http://ilcorsaronero.gratis'
-            self.TABLE_INDEX = 0
-            self.insideTd = False
-            self.insideDataTd = False
-            self.tableCount = -1
-            self.tdCount = -1
-            self.infoMap = {'name': 0, 'size': 2, 'seeds': 3, 'leech': 4}
             self.fullResData = []
-            self.pageRes = []
+            self.pageResSize = 0
             self.singleResData = self.getSingleData()
 
         def getSingleData(self):
             return {'name': '-1', 'seeds': '-1', 'leech': '-1', 'size': '-1', 'link': '-1', 'desc_link': '-1',
                     'engine_url': self.url}
 
-        def handle_starttag(self, tag, attrs):
-            if tag == 'table':
-                self.tableCount += 1
-            if tag == 'td':
-                self.insideTd = True
-                Dict = dict(attrs)
-                if self.tableCount == self.TABLE_INDEX:
-                    self.insideDataTd = True
-                    self.tdCount += 1
-            if self.insideDataTd and tag == 'a' and len(attrs) > 0:
-                Dict = dict(attrs)
-                if self.infoMap['name'] == self.tdCount and 'href' in Dict:
-                    self.singleResData['desc_link'] = Dict['href']
-                    self.singleResData['link'] = self.singleResData['desc_link']
-
-        def handle_endtag(self, tag):
-            if tag == 'td':
-                self.insideTd = False
-                self.insideDataTd = False
-            if tag == 'tr':
-                self.tdCount = -1
-                if len(self.singleResData) > 0:
-                    # ignore trash stuff
-                    if self.singleResData['name'] != '-1' and self.singleResData['size'].find(',') == -1:
-                        # ignore those with link and desc_link equals to -1
-                        if (self.singleResData['desc_link'] != '-1' or self.singleResData['link'] != '-1'):
-                            self.adjustName()
-                            prettyPrinter(self.singleResData)
-                            self.pageRes.append(self.singleResData)
-                            self.fullResData.append(self.singleResData)
-                    self.singleResData = self.getSingleData()
-
-        def handle_data(self, data):
-            if self.insideDataTd:
-                # print(data)
-                for key, val in self.infoMap.items():
-                    if self.tdCount == val:
-                        currKey = key
-                        if currKey in self.singleResData and data.strip() != '':
-                            if self.singleResData[currKey] == '-1':
-                                self.singleResData[currKey] = data.strip()
-                            else:
-                                self.singleResData[currKey] += data.strip()
-
         def feed(self, html):
-            HTMLParser.feed(self, html)
-            self.insideDataTd = False
-            self.tdCount = -1
-            self.tableCount = -1
+            self.pageResSize = 0
+            url_titles = self.searchTitles(html)
+            for c in range(len(url_titles)):
+                self.pageResSize = len(url_titles)
+                data = self.getSingleData()
+                data['desc_link'] = url_titles[c][0]
+                data['name'] = url_titles[c][1]
+                prettyPrinter(data)
+                self.fullResData.append(data)
 
-        def adjustName(self):
-            name = self.singleResData.get('name', '')
-            # if name ends with .. then we remove the 2 ending dots
-            if name.endswith('..'):
-                self.singleResData['name'] = name[:-2]
+        def searchTitles(self, html):
+            data = []
+            divs = re.findall(r'<div class="title">.*?</div>', html)
+            for div in divs:
+                url_titles = re.search(r'<a href="(.+?)">(.+?)</a>', div)
+                if url_titles:
+                    data.append([url_titles.group(1), url_titles.group(2)])
+            return data
 
     # DO NOT CHANGE the name and parameters of this function
     # This function will be the one called by nova2.py
     def search(self, what, cat='all'):
         currCat = self.supported_categories[cat]
         parser = self.MyHTMLParser()
-
-        # analyze firt page of results (thre are 40 entries)
-        for currPage in range(1, 2):
-            url = self.url + '/?s={0}&page={1}'.format(what, currPage)
-            #print(url)
+        # analyze six page of results (thre are 40 entries)
+        for currPage in range(1, self.max_page):
+            url = self.url + '/page/{1}/?s={0}'.format(what, currPage)
+            print(url)
             html = retrieve_url(url)
             parser.feed(html)
-            if len(parser.pageRes) <= 0:
+            # if there are results go with next page
+            if parser.pageResSize <= 0:
                 break
-            del parser.pageRes[:]
-        # print(parser.fullResData)
-        data = parser.fullResData
-        parser.close()
+        # data = parser.fullResData
+        # print(data)
 
     def download_torrent(self, info):
         """ Downloader """
@@ -125,4 +72,4 @@ class corsaronero(object):
 
 if __name__ == "__main__":
     c = corsaronero()
-    c.search('tomb%20raider')
+    c.search('a')
