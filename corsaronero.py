@@ -1,4 +1,4 @@
-# VERSION: 1.8
+# VERSION: 1.9
 # AUTHORS: mauricci
 
 from helpers import download_file, retrieve_url
@@ -46,6 +46,7 @@ class corsaronero(object):
     # DO NOT CHANGE the name and parameters of this function
     # This function will be the one called by nova2.py
     def search(self, what, cat='all'):
+        what = what.replace(' ', '+')
         currCat = self.supported_categories[cat]
         parser = self.MyHTMLParser()
         # analyze six page of results (thre are 40 entries)
@@ -72,4 +73,4 @@ class corsaronero(object):
 
 if __name__ == "__main__":
     c = corsaronero()
-    c.search('a')
+    c.search('l\'alba%20dei%20morti%20dementi')
