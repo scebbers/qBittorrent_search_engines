@@ -1,9 +1,10 @@
-# VERSION: 1.7
+# VERSION: 1.8
 # AUTHORS: mauricci
 
 from helpers import retrieve_url
 from helpers import download_file, retrieve_url
 from novaprinter import prettyPrinter
+import re
 
 try:
     # python3
@@ -108,9 +109,17 @@ class corsaroblu(object):
 
     def download_torrent(self, info):
         """ Downloader """
-        print(download_file(info))
+        htmlDesc = retrieve_url(info)
+        downloadLink = re.search(r'(download_magnet.+?)"', htmlDesc)
+        if downloadLink:
+            downloadLink = self.url + downloadLink.group(1)
+            magnetPageHtml = retrieve_url(downloadLink)
+            magnet = re.search(r'(magnet:.+?)"', magnetPageHtml)
+            if magnet:
+                print(magnet.group(1) + ' ' + info)
 
 
 if __name__ == "__main__":
     c = corsaroblu()
-    c.search('tomb%20raider')
+    #c.search('tomb%20raider')
+    c.download_torrent('https://www.ilcorsaroblu.org/La_Casa_Di_Carta_1x01_Episodio_1_iTA_AAC_WEBRip_x264_ADE_CreW_mkv_torrent-22073.html')
