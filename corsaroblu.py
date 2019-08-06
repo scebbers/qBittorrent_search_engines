@@ -1,4 +1,4 @@
-# VERSION: 1.8
+# VERSION: 1.9
 # AUTHORS: mauricci
 
 from helpers import retrieve_url
@@ -49,8 +49,8 @@ class corsaroblu(object):
                     self.tdCount += 1
             if self.insideDataTd and tag == 'a' and len(attrs) > 0:
                 Dict = dict(attrs)
-                if self.infoMap['torrLink'] == self.tdCount and 'href' in Dict:
-                    self.singleResData['link'] = self.url + Dict['href']
+                #if self.infoMap['torrLink'] == self.tdCount and 'href' in Dict:
+                #    self.singleResData['link'] = self.url + Dict['href']
                 if self.infoMap['name'] == self.tdCount and 'href' in Dict:
                     self.singleResData['desc_link'] = self.url + Dict['href']
 
@@ -97,13 +97,13 @@ class corsaroblu(object):
         for currPage in range(1, 11):
             url = self.url + 'index.php?page=torrents&search={0}&category={1}&pages={2}'.format(what, currCat,
                                                                                                  currPage)
-            # print(url)
+            #print(url)
             html = retrieve_url(url)
             parser.feed(html)
             if len(parser.pageRes) <= 0:
                 break
             del parser.pageRes[:]
-        # print(parser.fullResData)
+        #print(parser.fullResData)
         data = parser.fullResData
         parser.close()
 
@@ -113,7 +113,7 @@ class corsaroblu(object):
         downloadLink = re.search(r'(download_magnet.+?)"', htmlDesc)
         if downloadLink:
             downloadLink = self.url + downloadLink.group(1)
-            magnetPageHtml = retrieve_url(downloadLink)
+            magnetPageHtml = retrieve_url(downloadLink.replace(' ', '%20'))
             magnet = re.search(r'(magnet:.+?)"', magnetPageHtml)
             if magnet:
                 print(magnet.group(1) + ' ' + info)
@@ -121,5 +121,5 @@ class corsaroblu(object):
 
 if __name__ == "__main__":
     c = corsaroblu()
-    #c.search('tomb%20raider')
-    c.download_torrent('https://www.ilcorsaroblu.org/La_Casa_Di_Carta_1x01_Episodio_1_iTA_AAC_WEBRip_x264_ADE_CreW_mkv_torrent-22073.html')
+    c.search('tomb%20raider')
+    #c.download_torrent('https://www.ilcorsaroblu.org/Tomb_Raider_(2018)_720p_h264_ita_eng_sub_NUita_eng_MIRCrew_torrent_icb_torrent-435768.html')
