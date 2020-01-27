@@ -1,4 +1,4 @@
-#VERSION: 2.0
+#VERSION: 2.1
 #AUTHORS: mauricci
 
 from helpers import retrieve_url
@@ -54,7 +54,7 @@ class kickass_torrent(object):
                     and Dict.get('href', '').find('magnet') != -1:
                         magnet = Dict.get('href', '')
                         magnet = magnet.partition('?url=')[2]
-                        self.singleResData['link'] = magnet
+                        self.singleResData['link'] = unquote(magnet)
 
         def handle_endtag(self, tag):
             if tag == 'td':
