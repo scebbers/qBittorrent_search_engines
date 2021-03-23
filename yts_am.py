@@ -39,9 +39,10 @@ class yts_am(object):
     def processJson(self, json):
         movieData = self.getSingleData()
         for movie in json['data']['movies']:
-            movieData['name'] = '{} - {}'.format(movie['title'], movie['year'])
+            basename = '{} - {}'.format(movie['title'], movie['year'])
             movieData['desc_link'] = movie['url']
             for torrent in movie['torrents']:
+                movieData['name'] = basename + ' ({} {})'.format(torrent['quality'], torrent['type'])
                 movieData['seeds'] = torrent['seeds']
                 movieData['leech'] = torrent['peers']
                 movieData['size'] = torrent['size']
